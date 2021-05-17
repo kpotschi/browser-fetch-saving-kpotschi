@@ -9,11 +9,12 @@ let database = [];
 const apiKey = "ada86297";
 
 //match internal database with localstorage
-localStorage.getItem("moviedb") &&
+if (localStorage.getItem("moviedb")) {
 	JSON.parse(localStorage.getItem("moviedb")).forEach((e) => {
 		new View().displayMovieOnPage(e);
 		database.push(e);
 	});
+}
 
 // eventlistener stuff
 document.querySelector(".btn-save").addEventListener("click", (e) => {
@@ -26,14 +27,13 @@ document.querySelector(".btn-reset").addEventListener("click", (e) => {
 	database = [];
 });
 
-// the actual code we need
+// the actual code we need -- case-sensitive!
 async function addMovie(movieName) {
 	if (database.map((x) => x.Title).includes(movieName)) {
-		alert("movie already in list");
-	} else {
-		let data = await new Client(apiKey).getMovieData(movieName);
-		new View().displayMovieOnPage(data);
-		database.push(data);
-		localStorage.setItem("moviedb", JSON.stringify(database));
+		return alert("movie already in list");
 	}
+	let data = await new Client(apiKey).getMovieData(movieName);
+	new View().displayMovieOnPage(data);
+	database.push(data);
+	localStorage.setItem("moviedb", JSON.stringify(database));
 }
